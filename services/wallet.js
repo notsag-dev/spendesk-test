@@ -1,6 +1,15 @@
 const {Wallet} = require('../db');
 
+const currencies = ['USD', 'EUR', 'GBP'];
+
+/**
+ * Insert wallet into db.
+ *
+ */
 const createWallet = (companyId, currency, balance, isMaster) => {
+  if (currencies.indexOf(currency) === -1) {
+    throw new Error('Invalid currency');
+  }
   return Wallet.create({
     balance,
     currency,
@@ -9,6 +18,10 @@ const createWallet = (companyId, currency, balance, isMaster) => {
   });
 };
 
+/**
+ * List all company's wallets.
+ *
+ */
 const listWallets = companyId => {
   return Wallet.findAll({
     where: {
@@ -17,6 +30,10 @@ const listWallets = companyId => {
   });
 };
 
+/**
+ * Load money into master wallet.
+ *
+ */
 const loadMasterWallet = async (currency, amount, opt = {}) => {
   const res = await Wallet.findAll({where: {isMaster: true, currency}}, opt);
   if (!res.length) {
@@ -27,6 +44,7 @@ const loadMasterWallet = async (currency, amount, opt = {}) => {
 
 module.exports = {
   createWallet,
+  currencies,
   loadMasterWallet,
   listWallets,
 };

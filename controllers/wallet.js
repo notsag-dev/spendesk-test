@@ -9,13 +9,19 @@ module.exports.set = app => {
     // it as master.
     const masterWallet = Boolean(req.body.master && companyId === 1);
     const {currency} = req.body;
-
-    if (!currency) {
-      res.status(400).send({message: 'currency not present on the request'});
+    if (walletService.currencies.indexOf(currency) === -1) {
+      res
+        .status(400)
+        .send({message: 'Value for currency inexistent or incorrect'});
       return;
     }
     try {
-      await walletService.createWallet(companyId, currency, 10000, masterWallet);
+      await walletService.createWallet(
+        companyId,
+        currency,
+        10000,
+        masterWallet,
+      );
     } catch (err) {
       console.log(err);
       res.status(500).send();
