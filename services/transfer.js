@@ -45,6 +45,9 @@ const validateTransfer = (userId, companyId, entityFrom, typeFrom, entityTarget,
   if (entityFrom.balance < amount) {
     throw Error('Balance is not enough for completing transference');
   }
+  if (amount <= 0) {
+    throw Error('Amount cannot be <= 0');
+  }
   if (typeFrom === 'card' && entityFrom.blocked || typeTarget === 'card' && entityTarget.blocked) {
     throw Error('One of the entities is a blocked card');
   }
