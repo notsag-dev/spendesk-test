@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const http = require('http');
 const controllers = require('./controllers');
+const config = require('./config/config');
 
 const app = express();
 
@@ -15,6 +16,6 @@ app.get('/ping', (req, res) => res.status(200).send('pong'));
 
 // Listen
 const httpServer = http.createServer(app);
-httpServer.listen(8080, () => {
-  console.log(`App listening on port 8080!`);
+httpServer.listen(config.port, () => {
+  console.log(`App listening on port ${config.port}!`);
 });
