@@ -2,6 +2,13 @@ const walletService = require('./wallet');
 const {getConversionInfo} = require('./conversion');
 const {sequelize, Transfer, Wallet, Card} = require('../db');
 
+/**
+ * Get wallet or card object from database.
+ *
+ * @param {string} type - Entity type: wallet or card.
+ * @param {number} id   - Id of the entity on the db.
+ *
+ */
 const getWalletOrCard = (type, id, queryOpt = {}) => {
   switch (type) {
     case 'wallet':
@@ -13,6 +20,18 @@ const getWalletOrCard = (type, id, queryOpt = {}) => {
   }
 };
 
+/**
+ * Validate if transfer can be executed.
+ *
+ * @param {number} userId       - Id of the user that performs the action.
+ * @param {number} companyId    - Id of the company of the user.
+ * @param {number} entityFrom   - Db object of the entity from where money is taken.
+ * @param {string} typeFrom     - Type of the origin entity: wallet or card.
+ * @param {number} entityTarget - Db object of the entity to where money is transferred.
+ * @param {string} typeTarget   - Type of the target entity: wallet or card.
+ * @param {number} amount       - Amount to transfer.
+ *
+ */
 const validateTransfer = (userId, companyId, entityFrom, typeFrom, entityTarget, typeTarget, amount) => {
   if (
     (entityFrom.userId && entityFrom.userId !== userId) ||
@@ -23,7 +42,6 @@ const validateTransfer = (userId, companyId, entityFrom, typeFrom, entityTarget,
       `Forbidden tx for user ${userId}, ${typeFrom} ${entityFrom.id}`,
     );
   }
-  console.log('CHEEEECK', entityFrom.balance, entityFrom.balance)
   if (entityFrom.balance < amount) {
     throw Error('Balance is not enough for completing transference');
   }
@@ -32,6 +50,18 @@ const validateTransfer = (userId, companyId, entityFrom, typeFrom, entityTarget,
   }
 };
 
+/**
+ * Transfer money between cards/wallets (any combination of those).
+ *
+ * @param {number} userId     - Id of the user that performs the action.
+ * @param {number} companyId  - Id of the company of the user.
+ * @param {number} idFrom     - Entity from where money is taken.
+ * @param {string} typeFrom   - Type of the origin entity: wallet or card.
+ * @param {number} idTarget   - Entity to where money is transferred.
+ * @param {string} typeTarget - Type of the target entity: wallet or card.
+ * @param {number} amount     - Amount to transfer.
+ *
+ */
 const transfer = async (
   userId,
   companyId,

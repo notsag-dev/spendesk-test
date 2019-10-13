@@ -16,6 +16,10 @@ const exchangeRates = {
   }
 }
 
+/**
+ * Get conversion info between currencies for a specific amount.
+ *
+ */
 const getConversionInfo = (currencyFrom, currencyTarget, amount) => {
   if (currencyFrom === currencyTarget) {
     return {converted: false};

@@ -1,6 +1,9 @@
 const {sequelize, Card, Wallet} = require('../db');
 
-// TODO Move to helpers
+/**
+ * Generate a fixed length numerical string.
+ *
+ */
 const getRandomNumString = (length) => {
   const max = 10 ** length;
   const auxRand = String(Math.floor(Math.random() * max));
@@ -8,7 +11,8 @@ const getRandomNumString = (length) => {
 }
 
 /**
- * Creates a new card on the database
+ * Create a new card on the database.
+ *
  */
 const createCard = async (userId, companyId, walletId) => {
   const wallet = await Wallet.findByPk(walletId);
@@ -31,6 +35,10 @@ const createCard = async (userId, companyId, walletId) => {
   });
 };
 
+/**
+ * List cards created by a user.
+ *
+ */
 const listCards = userId => {
   return Card.findAll({
     where: {
@@ -39,6 +47,10 @@ const listCards = userId => {
   });
 };
 
+/**
+ * Check if user can perform action with card.
+ *
+ */
 const validateUserCard = (userId, card) => {
   if (card.userId !== userId) {
     throw new Error(
@@ -77,6 +89,10 @@ const updateCardBalance = (userId, cardId, amount) => {
   });
 };
 
+/**
+ * Block card and move its money to the wallet.
+ *
+ */
 const blockCard = (userId, cardId) => {
   return sequelize.transaction(async t => {
     const opt = {transaction: t, lock: true};
@@ -92,6 +108,10 @@ const blockCard = (userId, cardId) => {
   });
 };
 
+/**
+ * Unblock card.
+ *
+ */
 const unblockCard = async (userId, cardId) => {
   const card = await Card.findByPk(cardId);
   if (card.userId !== userId) {
